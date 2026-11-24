@@ -5,6 +5,7 @@ import { Footer } from '../footer/footer';
 import { HttpClient } from '@angular/common/http';
 
 declare const $: any;
+declare const Tabulator: any;
 
 // anne putri miranda - 231103875
 @Component({
@@ -29,67 +30,43 @@ export class Mahasiswa implements AfterViewInit {
   }
 
   bindMahasiswa(): void {
-    this.http.get("https://stmikpontianak.cloud/011100862/tampilMahasiswa.php")
-      .subscribe((data: any) => {
+    this.http.get<any[]>("https://stmikpontianak.cloud/011100862/tampilMahasiswa.php")
+      .subscribe((data: any[]) => {
+        this.mahasiswa = data;
 
-        const isMobile = window.innerWidth < 768;
+        const tableData = data.map((mhs: any) => ({
+          NIM: mhs.NIM,
+          Nama: mhs.Nama,
+          JenisKelamin: mhs.JenisKelamin,
+          TempatTanggalLahir: `${mhs.TempatLahir}, ${mhs.TanggalLahir}`,
+          JP: mhs.JP,
+          Alamat: mhs.Alamat,
+          StatusNikah: mhs.StatusNikah,
+          TahunMasuk: mhs.TahunMasuk,
+        }));
 
         if (!this.table1) {
-          this.table1 = $('#datatable-mahasiswa').DataTable({
-            responsive: false,
-            lengthChange: true,
-            autoWidth: false,
-            scrollX: true,
-            stripeClasses: ['odd', 'even'],
-            columnDefs: isMobile
-              ? [{ targets: [2, 3, 4, 5, 6, 7, 8], visible: false }]
-              : [{ targets: [0], visible: false }] // desktop: sembunyikan kolom expand button
+          this.table1 = new Tabulator('#tabulator-mahasiswa', {
+            data: tableData,
+            layout: 'fitColumns',
+            responsiveLayout: 'collapse',
+            pagination: 'local',
+            paginationSize: 10,
+            placeholder: 'Data mahasiswa tidak tersedia',
+            columns: [
+              { title: 'NIM', field: 'NIM', responsive: 0 },
+              { title: 'Nama', field: 'Nama', responsive: 0 },
+              { title: 'Jenis Kelamin', field: 'JenisKelamin' },
+              { title: 'Tempat, Tgl Lahir', field: 'TempatTanggalLahir' },
+              { title: 'JP', field: 'JP' },
+              { title: 'Alamat', field: 'Alamat' },
+              { title: 'Status', field: 'StatusNikah' },
+              { title: 'Tahun Masuk', field: 'TahunMasuk' },
+            ],
           });
-
-          if (isMobile) {
-            $('#datatable-mahasiswa tbody').on('click', '.expand-btn', (event: any) => {
-              const tr = $(event.currentTarget).closest('tr');
-              const row = this.table1.row(tr);
-
-              if (row.child.isShown()) {
-                row.child.hide();
-                tr.find('.expand-btn').html('&#9654;');
-                tr.removeClass('shown');
-              } else {
-                const d = row.data();
-                row.child(this.formatDetail(d)).show();
-                tr.find('.expand-btn').html('&#9660;');
-                tr.addClass('shown');
-              }
-            });
-          }
-
         } else {
-          this.table1.clear();
+          this.table1.setData(tableData);
         }
-
-        data.forEach((mhs: any) => {
-          const tempatTanggalLahir = `${mhs.TempatLahir}, ${mhs.TanggalLahir}`;
-          const jenisKelaminFormatted = mhs.JenisKelamin.toLowerCase() === 'perempuan'
-            ? `Perempuan <i class='fas fa-venus text-danger'></i>`
-            : `Laki-laki <i class='fas fa-mars text-primary'></i>`;
-
-          // Semua data selalu 9 kolom (kolom expand button selalu ada di index 0)
-          const rowData = [
-            '<button class="expand-btn btn btn-sm btn-outline-secondary py-0 px-1">&#9654;</button>',
-            mhs.NIM,
-            mhs.Nama,
-            jenisKelaminFormatted,
-            tempatTanggalLahir,
-            mhs.JP,
-            mhs.Alamat,
-            mhs.StatusNikah,
-            mhs.TahunMasuk
-          ];
-          this.table1.row.add(rowData);
-        });
-
-        this.table1.draw();
       });
   }
 
