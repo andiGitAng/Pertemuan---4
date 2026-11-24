@@ -1,1 +1,60 @@
-<p>mahasiswa works!</p>
+<div class="app-wrapper">
+  <app-header></app-header>
+  <app-sidebar moduleName="mahasiswa"></app-sidebar>
+  <main class="app-main" id="main" tabindex="-1">
+    <!--begin::App Content Header-->
+    <div class="app-content-header">
+      <!--begin::Container-->
+      <div class="container-fluid">
+        <!--begin::Row-->
+        <div class="row">
+          <div class="col-sm-6">
+            <h1 class="mb-0 fs-3">Mahasiswa</h1>
+          </div>
+          <div class="col-sm-6">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb float-sm-end">
+                <li class="breadcrumb-item">
+                  <a href="#">Home</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Mahasiswa</li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+        <!--end::Row-->
+      </div>
+      <!--end::Container-->
+    </div>
+    <!--end::App Content Header-->
+    <!--begin::App Content-->
+    <div class="app-content">
+      <!--begin::Container-->
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <button id="tambahButton" class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#tambahModal">
+              <i class="bi bi-plus-lg"></i> Tambah
+            </button>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12">
+            <div class="card card-primary card-outline mahasiswa-datatable-card">
+              <div class="card-header">
+                <h3 class="card-title">Data Mahasiswa</h3>
+              </div>
+              <div class="card-body p-0">
+                <div id="tabulator-mahasiswa"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--end::Container-->
+    </div>
+    <!--end::App Content-->
+  </main>
+  <app-footer></app-footer>
+</div>
